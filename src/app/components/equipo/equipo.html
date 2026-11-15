@@ -1,0 +1,39 @@
+<section class="panel-equipo">
+  <div class="header-equipo">
+    <h2>2. Mi Equipo Pokémon ({{ miembros.length }} / 6)</h2>
+    @if (miembros.length > 0) {
+      <button type="button" class="btn-limpiar" (click)="vaciar()">Vaciar equipo</button>
+    }
+  </div>
+
+  <!-- Estado vacío claro (Requisito 2.5) -->
+  @if (miembros.length === 0) {
+    <div class="equipo-vacio">
+      Tu equipo está vacío. Busca un Pokémon a la izquierda y pulsa <strong>"+ Agregar al equipo"</strong>.
+    </div>
+  } @else {
+    <div class="grid-equipo">
+      @for (p of miembros; track $index) {
+        <div class="card-miembro">
+          <img [src]="p.imagen" [alt]="p.nombre" />
+          <h4>{{ p.nombre.toUpperCase() }}</h4>
+          <p class="sub-dato">Tipos: {{ p.tipos.join(' / ') }}</p>
+          <p class="sub-dato">Habilidad: {{ p.habilidadActiva }}</p>
+          <button type="button" class="btn-quitar" (click)="quitar($index)">Quitar</button>
+        </div>
+      }
+    </div>
+
+    <div class="analisis-grupal">
+      <h4>⚠️ Alertas de Cobertura del Equipo</h4>
+      <p>Cantidad de miembros débiles ante cada tipo:</p>
+      <div class="tags-grupales">
+        @for (item of obtenerResumenDebilidades(); track item.tipo) {
+          <span class="alerta-tipo" [class.critica]="item.cantidad >= 3">
+            {{ item.tipo }}: {{ item.cantidad }} miembro(s)
+          </span>
+        }
+      </div>
+    </div>
+  }
+</section>

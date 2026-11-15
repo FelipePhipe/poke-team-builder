@@ -1,0 +1,116 @@
+<section class="panel-buscador">
+  <h2>1. Explorador y Analizador Pokémon</h2>
+
+  <div class="barra-busqueda">
+    <input
+      type="text"
+      [(ngModel)]="terminoBusqueda"
+      (keyup.enter)="buscar()"
+      placeholder="Nombre o ID (ej. garchomp, 6, lucario)..."
+    />
+    <button type="button" (click)="buscar()" [disabled]="cargando()">
+      {{ cargando() ? 'Buscando...' : 'Buscar' }}
+    </button>
+  </div>
+
+  <!-- Estados de carga y error -->
+  @if (cargando()) {
+    <div class="estado-carga">Consultando endpoints de PokéAPI...</div>
+  }
+
+  @if (errorMensaje()) {
+    <div class="estado-error">{{ errorMensaje() }}</div>
+  }
+
+  <!-- Tarjeta de resultados integrada -->
+  @if (pokemonActual() && !cargando()) {
+    <div class="ficha-pokemon">
+      <div class="cabecera-ficha">
+        <img
+          [src]="pokemonActual().sprites.other['official-artwork'].front_default || pokemonActual().sprites.front_default"
+          [alt]="pokemonActual().name"
+        />
+        <div>
+          <h3>#{{ pokemonActual().id }} {{ pokemonActual().name.toUpperCase() }}</h3>
+          <div class="etiquetas-tipo">
+            @for (t of pokemonActual().types; track t.type.name) {
+              <span class="badge-tipo">{{ t.type.name }}</span>
+            }
+          </div>
+          <button
+            type="button"
+            class="btn-agregar"
+            (click)="enviarAlEquipo()"
+            [disabled]="cantidadEquipo >= 6"
+          >
+            {{ cantidadEquipo >= 6 ? 'Equipo lleno (6/6)' : '+ Agregar al equipo' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Estadísticas Base (/pokemon) -->
+      <div class="bloque-info">
+        <h4>Estadísticas Base</h4>
+        <div class="grid-stats">
+          @for (s of pokemonActual().stats; track s.stat.name) {
+            <div class="stat-item">
+              <span>{{ s.stat.name }}: <strong>{{ s.base_stat }}</strong></span>
+              <progress [value]="s.base_stat" max="255"></progress>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Inspector de Habilidades (/ability) -->
+      <div class="bloque-info">
+        <h4>Habilidades (Haz clic para inspeccionar efecto)</h4>
+        <div class="lista-habilidades">
+          @for (ab of pokemonActual().abilities; track ab.ability.name) {
+            <button
+              type="button"
+              class="btn-habilidad"
+              [class.activa]="habilidadSeleccionada() === ab.ability.name"
+              (click)="verHabilidad(ab.ability.name)"
+            >
+              {{ ab.ability.name }} {{ ab.is_hidden ? '(Oculta)' : '' }}
+            </button>
+          }
+        </div>
+        <p class="caja-habilidad">
+          @if (cargandoHabilidad()) {
+            <em>Cargando efecto de habilidad...</em>
+          } @else {
+            <strong>{{ habilidadSeleccionada() }}:</strong> {{ descripcionHabilidad() }}
+          }
+        </p>
+      </div>
+
+      <!-- Análisis Defensivo (/type) -->
+      <div class="bloque-info">
+        <h4>Análisis Defensivo de Tipos</h4>
+        <p>
+          <strong>Debilidades:</strong>
+          @if (debilidades().length === 0) { <span>Ninguna</span> }
+          @for (d of debilidades(); track d.tipo) {
+            <span class="tag-debil">{{ d.tipo }} (x{{ d.multiplicador }})</span>
+          }
+        </p>
+        <p>
+          <strong>Resistencias:</strong>
+          @if (resistencias().length === 0) { <span>Ninguna</span> }
+          @for (r of resistencias(); track r.tipo) {
+            <span class="tag-resistente">{{ r.tipo }} (x{{ r.multiplicador }})</span>
+          }
+        </p>
+        @if (inmunidades().length > 0) {
+          <p>
+            <strong>Inmunidades (x0):</strong>
+            @for (inm of inmunidades(); track inm) {
+              <span class="tag-inmune">{{ inm }}</span>
+            }
+          </p>
+        }
+      </div>
+    </div>
+  }
+</section>
