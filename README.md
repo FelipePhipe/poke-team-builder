@@ -18,4 +18,18 @@ La aplicación integra tres recursos distintos de **PokéAPI v2** (`https://poke
 ## Instalación y Ejecución Local
 1. Clonar el repositorio:
    ```bash
-   git clone https://github.com/felipephipe/poke-team-builder.git (https://github.com/TU-USUARIO/poke-team-builder.git)
+   git clone [https://github.com/FelipePhipe/poke-team-builder.git](https://github.com/FelipePhipe/poke-team-builder.git)
+   ```
+2. Entrar al directorio del proyecto e instalar dependencias:
+   ```bash
+   cd poke-team-builder
+   npm install
+   ```
+3. Iniciar el servidor de desarrollo local:
+   ```bash
+   ng serve -o
+   ```
+4. Abrir el navegador en `http://localhost:4200`.
+
+## Despliegue en Producción (Vercel)
+- **URL de la aplicación desplegada:** https://poke-team-builder-theta.vercel.app
